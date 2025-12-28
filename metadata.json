@@ -1,0 +1,7 @@
+{
+  "name": "MuseScape AI Storyteller",
+  "description": "An immersive creative writing interface that transforms your images into atmospheric story openings, complete with expressive AI narration and interactive world-building chat.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
