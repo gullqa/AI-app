@@ -1,63 +1,92 @@
-# 每个"领域包"= 数据源 + 相关性关键词 + 分析师角色/框架 + 推送目标。
-# 新增行业/学科：复制一段改即可，无需改代码。
+# 碳中和领域包。每个领域 = 数据源 + 相关性关键词 + 分析师角色/框架 + 推送目标。
+# 注意：sources 里的 URL 未在真实网络下逐个验证，部署后先 `python -m intel.cli run <域>` 看有无 source error，
+# 失效的换掉即可。国内媒体若无 RSS，可用 RSSHub 自建转换后填入。
 domains:
-  semiconductor:
-    name: 半导体产业
-    schedule: "0 8 * * *"          # 每天 08:00（服务器时区）推送
+  carbon_policy:
+    name: 碳中和政策与国际气候治理
+    schedule: "0 8 * * *"
     channels: [feishu, wecom]
-    analyst_role: 资深半导体产业分析师，熟悉晶圆制造、先进封装、设备材料与出口管制
-    framework: [供需与产能, 技术路线, 政策与地缘, 竞争格局]
-    keywords:                      # 关键词: 权重
-      HBM: 3
-      先进封装: 3
-      CoWoS: 3
-      export controls: 3
-      TSMC: 2
-      台积电: 2
-      光刻: 2
-      lithography: 2
-      foundry: 1
-      wafer: 1
-    exclude: [giveaway, coupon]
+    analyst_role: 资深气候政策分析师，熟悉中国“双碳”政策体系、欧盟 Fit for 55/CBAM、UNFCCC/COP 谈判与各国 NDC
+    framework: [政策信号与力度, 时间表与落地机制, 对行业/出口企业的影响, 国际博弈与不确定性]
+    keywords:
+      碳达峰: 3
+      碳中和: 3
+      双碳: 3
+      NDC: 3
+      CBAM: 3
+      碳边境: 3
+      Fit for 55: 2
+      COP30: 2
+      COP31: 2
+      net zero: 2
+      net-zero: 2
+      climate policy: 2
+      carbon border: 3
+      emissions target: 2
+      Paris Agreement: 2
+      生态环境部: 2
+    exclude: [giveaway, sponsored]
     sources:
-      - {type: rss, name: SemiAnalysis-like/EE Times, url: "https://www.eetimes.com/feed/"}
-      - {type: rss, name: Tom's Hardware, url: "https://www.tomshardware.com/feeds/all"}
-      - {type: arxiv, name: arXiv 硬件架构, query: "cat:cs.AR", max: 15}
+      - {type: rss, name: Carbon Brief, url: "https://www.carbonbrief.org/feed/"}
+      - {type: rss, name: Clean Energy Wire, url: "https://www.cleanenergywire.org/rss.xml"}
+      - {type: rss, name: UNFCCC News, url: "https://unfccc.int/news/feed"}
 
-  biomedicine:
-    name: 生物医药
+  carbon_market:
+    name: 碳市场与碳资产
     schedule: "30 8 * * *"
-    channels: [feishu]
-    analyst_role: 资深医药行业分析师，关注临床进展、监管审批与 BD 交易
-    framework: [临床/研发进展, 监管与审批, 商业化与BD, 风险信号]
-    keywords:
-      Phase 3: 3
-      FDA approval: 3
-      GLP-1: 3
-      ADC: 2
-      CAR-T: 2
-      licensing: 2
-      clinical trial: 1
-    exclude: []
-    sources:
-      - {type: rss, name: FDA Press Releases, url: "https://www.fda.gov/about-fda/contact-fda/stay-informed/rss-feeds/press-releases/rss.xml"}
-      - {type: rss, name: Fierce Biotech, url: "https://www.fiercebiotech.com/rss/xml"}
-      - {type: arxiv, name: arXiv 定量生物, query: "cat:q-bio.BM", max: 10}
-
-  ai_research:
-    name: AI 学术前沿
-    schedule: "0 9 * * 1-5"
     channels: [feishu, wecom]
-    analyst_role: 机器学习研究员，擅长快速判断论文的新颖性、可复现性与产业影响
-    framework: [核心创新, 证据强度, 可复现性, 产业影响]
+    analyst_role: 碳市场研究员，熟悉全国碳市场（CEA）、CCER 重启、欧盟 EU ETS、自愿碳市场（VCM）与碳信用质量评估
+    framework: [价格与供需, 规则与配额分配变化, 履约与合规影响, 信用质量与交易风险]
     keywords:
-      agent: 2
-      reasoning: 2
-      reinforcement learning: 2
-      long context: 2
-      diffusion: 1
-      benchmark: 1
-    exclude: []
+      碳价: 3
+      碳市场: 3
+      碳配额: 3
+      CCER: 3
+      碳信用: 2
+      EU ETS: 3
+      EUA: 3
+      carbon price: 3
+      carbon market: 3
+      carbon credit: 2
+      voluntary carbon: 2
+      Article 6: 3
+      Verra: 2
+      Gold Standard: 1
+      integrity: 1
+      allowance: 1
+    exclude: [giveaway, sponsored]
     sources:
-      - {type: arxiv, name: arXiv cs.CL, query: "cat:cs.CL", max: 25}
-      - {type: arxiv, name: arXiv cs.LG, query: "cat:cs.LG", max: 25}
+      - {type: rss, name: Carbon Herald, url: "https://carbonherald.com/feed/"}
+      - {type: rss, name: Carbon Brief, url: "https://www.carbonbrief.org/feed/"}
+      - {type: rss, name: Clean Energy Wire, url: "https://www.cleanenergywire.org/rss.xml"}
+
+  decarb_tech:
+    name: 减碳技术与能源转型
+    schedule: "0 9 * * 1-5"
+    channels: [feishu]
+    analyst_role: 能源转型与减碳技术分析师，熟悉可再生能源、储能、绿氢、CCUS/DAC、工业脱碳与其技术经济性（LCOE/LCOS/成本曲线）
+    framework: [技术成熟度(TRL)与成本, 规模化瓶颈, 商业化与政策依赖, 减排量级与真实性]
+    keywords:
+      CCUS: 3
+      carbon capture: 3
+      direct air capture: 3
+      DAC: 2
+      green hydrogen: 3
+      绿氢: 3
+      储能: 2
+      energy storage: 2
+      solid-state battery: 2
+      LCOE: 2
+      perovskite: 2
+      钙钛矿: 2
+      green steel: 3
+      decarbonization: 2
+      电解槽: 2
+      electrolyzer: 2
+      sodium-ion: 1
+    exclude: [giveaway, sponsored]
+    sources:
+      - {type: rss, name: CleanTechnica, url: "https://cleantechnica.com/feed/"}
+      - {type: rss, name: Carbon Herald, url: "https://carbonherald.com/feed/"}
+      - {type: arxiv, name: arXiv CCUS/碳捕集, query: 'all:"carbon capture" OR all:"direct air capture"', max: 15}
+      - {type: arxiv, name: arXiv 碳中和/脱碳, query: 'all:"carbon neutrality" OR all:"net-zero"', max: 15}
