@@ -1,0 +1,9 @@
+page { background: #f5f7f6; color: #1f2937; font-size: 30rpx; line-height: 1.7; }
+.card { background: #fff; margin: 20rpx; padding: 28rpx; border-radius: 16rpx; }
+.tip { color: #9ca3af; font-size: 24rpx; text-align: center; padding: 24rpx; }
+.h1 { font-size: 40rpx; font-weight: 700; margin: 16rpx 0; }
+.h2 { font-size: 34rpx; font-weight: 700; margin: 28rpx 0 8rpx; color: #0f5132; }
+.h3 { font-size: 30rpx; font-weight: 700; margin: 16rpx 0 4rpx; }
+.li { padding-left: 24rpx; position: relative; }
+.li::before { content: "•"; position: absolute; left: 0; color: #0f5132; }
+.link { color: #2563eb; font-size: 24rpx; word-break: break-all; }

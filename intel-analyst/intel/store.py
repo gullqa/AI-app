@@ -53,3 +53,32 @@ class Store:
             "SELECT body FROM briefings WHERE domain=? ORDER BY id DESC LIMIT 1", (domain,)
         ).fetchone()
         return r["body"] if r else None
+
+
+class UserStore(Store):
+    """在 Store 基础上增加小程序用户：关注领域与每日问答配额。"""
+
+    def __init__(self, path: str):
+        super().__init__(path)
+        self.db.executescript("""
+        CREATE TABLE IF NOT EXISTS follows(openid TEXT, domain TEXT, PRIMARY KEY(openid, domain));
+        CREATE TABLE IF NOT EXISTS usage(openid TEXT, day TEXT, n INTEGER DEFAULT 0, PRIMARY KEY(openid, day));
+        """)
+
+    def follows(self, openid: str) -> list[str]:
+        return [r[0] for r in self.db.execute("SELECT domain FROM follows WHERE openid=?", (openid,))]
+
+    def set_follow(self, openid: str, domain: str, on: bool) -> None:
+        if on:
+            self.db.execute("INSERT OR IGNORE INTO follows VALUES(?,?)", (openid, domain))
+        else:
+            self.db.execute("DELETE FROM follows WHERE openid=? AND domain=?", (openid, domain))
+        self.db.commit()
+
+    def take_quota(self, openid: str, limit: int) -> bool:
+        """原子地消耗一次配额；超限返回 False。"""
+        self.db.execute("INSERT OR IGNORE INTO usage(openid, day, n) VALUES(?, date('now'), 0)", (openid,))
+        cur = self.db.execute(
+            "UPDATE usage SET n=n+1 WHERE openid=? AND day=date('now') AND n<?", (openid, limit))
+        self.db.commit()
+        return cur.rowcount == 1

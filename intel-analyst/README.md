@@ -40,6 +40,26 @@ API（需请求头 `X-Token: $INTEL_API_TOKEN`）：`POST /run/{domain}?send=tru
 - 个人微信无官方机器人接口，第三方协议方案有封号风险，故未内置；如需双向对话，
   可用企业微信"自建应用"回调（需实现消息加解密），`intel/chat.py` 的 `handle()` 已与渠道解耦，直接复用。
 
+## 微信小程序（`miniprogram/`）
+原生小程序，三个页面：简报（领域切换 + 下拉刷新）、问答（每用户每日限额）、我的（关注领域）。
+后端接口在 `intel/api.py`（`/api/*`，微信 `code` 换 openid，签发 30 天令牌）。
+
+**模型**：默认 DeepSeek（`INTEL_LLM_PROVIDER=deepseek`，填 `DEEPSEEK_API_KEY`），境内可直连；
+改成 `anthropic` 即切回 Claude。
+
+**本地联调（无需 AppID、域名、备案）**
+1. `.env` 里设 `INTEL_TOKEN_SECRET=随便一串长随机`、`INTEL_DEV_LOGIN=1`（假登录，仅本机）。
+2. `uvicorn intel.server:app --port 8000`，先 `python -m intel.cli run carbon_market` 生成一份简报。
+3. 微信开发者工具导入 `miniprogram/`（AppID 选测试号/游客模式），勾选"不校验合法域名"。
+
+**上线前必须解决的事（代码解决不了）**
+- **主体与类目**：资讯/AI 生成内容类目对个人主体限制很严，个人主体很可能无法过审，需先在小程序后台核对可选类目；
+  通常要企业/个体工商户主体，并可能涉及生成式 AI 备案。
+- **域名与服务器**：request 合法域名必须 https 且 ICP 备案，服务器通常需在境内。
+- **内容安全**：AI 生成内容与用户输入应接入微信 `msgSecCheck`（尚未实现）。
+- **推送**：订阅消息需用户逐次授权，无法像飞书那样无条件每日推送（尚未实现）。
+- 生产环境保持 `INTEL_DEV_LOGIN=0`，并配置真实 `WX_APPID` / `WX_SECRET`。
+
 ## 新增一个领域
 在 `config/domains.yaml` 复制一段：改 `keywords`（关键词: 权重）、`sources`（`rss` 或 `arxiv`）、
 `analyst_role`、`framework`、`schedule`（cron）、`channels`。无需改代码。

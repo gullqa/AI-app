@@ -1,0 +1,20 @@
+{
+  "pages": ["pages/index/index", "pages/ask/ask", "pages/me/me"],
+  "window": {
+    "navigationBarTitleText": "碳中和情报",
+    "navigationBarBackgroundColor": "#0f5132",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f7f6"
+  },
+  "tabBar": {
+    "color": "#6b7280",
+    "selectedColor": "#0f5132",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "简报" },
+      { "pagePath": "pages/ask/ask", "text": "问答" },
+      { "pagePath": "pages/me/me", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

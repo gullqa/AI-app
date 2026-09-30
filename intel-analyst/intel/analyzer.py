@@ -1,4 +1,5 @@
-from .config import Domain, env
+from . import llm
+from .config import Domain
 from .models import Item
 
 SYSTEM = """你是{role}。请基于给定情报条目撰写专业简报，要求：
@@ -16,18 +17,8 @@ def format_items(items: list[Item]) -> str:
     )
 
 
-def _llm(system: str, user: str, max_tokens: int = 2500) -> str:
-    import anthropic
-    client = anthropic.Anthropic()
-    msg = client.messages.create(
-        model=env("INTEL_MODEL", "claude-sonnet-5-5"), max_tokens=max_tokens,
-        system=system, messages=[{"role": "user", "content": user}],
-    )
-    return "".join(b.text for b in msg.content if b.type == "text")
-
-
 def offline_digest(d: Domain, items: list[Item]) -> str:
-    lines = [f"## {d.name}情报速览（离线模式：未配置 ANTHROPIC_API_KEY，仅按关键词排序）"]
+    lines = [f"## {d.name}情报速览（离线模式：未配置模型 API Key，仅按关键词排序）"]
     lines += [f"{i}. **{it.title}**（{it.source}，相关度 {it.score:g}）\n   {it.url}" for i, it in enumerate(items, 1)]
     return "\n".join(lines)
 
@@ -36,9 +27,9 @@ def briefing(d: Domain, items: list[Item], top: int = 25) -> str:
     items = sorted(items, key=lambda i: -i.score)[:top]
     if not items:
         return f"## {d.name}\n本周期没有发现相关新情报。"
-    if not env("ANTHROPIC_API_KEY"):
+    if not llm.available():
         return offline_digest(d, items)
-    body = _llm(SYSTEM.format(role=d.analyst_role, framework="、".join(d.framework) or "自行判断"),
+    body = llm.complete(SYSTEM.format(role=d.analyst_role, framework="、".join(d.framework) or "自行判断"),
                 f"领域：{d.name}\n情报条目：\n{format_items(items)}")
     refs = "\n".join(f"[{i}] {it.title} — {it.url}" for i, it in enumerate(items, 1))
     return f"# {d.name}情报简报\n\n{body}\n\n---\n**来源**\n{refs}"
@@ -55,8 +46,8 @@ def answer(d: Domain, question: str, pool: list[Item], top: int = 12) -> str:
     hits = sorted(pool, key=rel, reverse=True)[:top]
     if not hits:
         return "情报库里暂时没有相关内容。"
-    if not env("ANTHROPIC_API_KEY"):
+    if not llm.available():
         return offline_digest(d, hits)
-    return _llm(
+    return llm.complete(
         f"你是{d.analyst_role}。只依据给定情报回答，用 [编号] 引用，证据不足就直说，并区分事实与判断。中文，简洁。",
         f"问题：{question}\n\n情报：\n{format_items(hits)}", 1200)

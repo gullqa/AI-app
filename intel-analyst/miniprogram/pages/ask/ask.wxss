@@ -1,0 +1,5 @@
+.card.me { background: #d1fae5; margin-left: 100rpx; }
+.card.ai { margin-right: 60rpx; }
+.bar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 16rpx; padding: 20rpx; background: #fff; padding-bottom: calc(20rpx + env(safe-area-inset-bottom)); }
+.ipt { flex: 1; background: #f3f4f6; border-radius: 12rpx; padding: 0 20rpx; height: 72rpx; }
+.btn { background: #0f5132; color: #fff; margin: 0; }

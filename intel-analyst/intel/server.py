@@ -10,13 +10,14 @@ from . import chat
 from .channels import feishu
 from .config import env, load_domains
 from .pipeline import run_domain
-from .store import Store
+from .store import UserStore
+from .api import make_router
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 log = logging.getLogger("intel")
 
 domains = load_domains()
-store = Store(env("INTEL_DB", "data/intel.db"))
+store = UserStore(env("INTEL_DB", "data/intel.db"))
 scheduler = BackgroundScheduler()
 
 
@@ -32,6 +33,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="Intel Analyst", lifespan=lifespan)
+app.include_router(make_router(domains, store))
 
 
 def auth(token: str | None) -> None:

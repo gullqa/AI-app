@@ -1,0 +1,8 @@
+<view class="card">
+  <view class="h3">关注的领域</view>
+  <view class="row" wx:for="{{domains}}" wx:key="key">
+    <text>{{item.name}}</text>
+    <switch checked="{{item.followed}}" data-key="{{item.key}}" bindchange="toggle" color="#0f5132" />
+  </view>
+</view>
+<view class="tip">关注的领域会优先展示在简报首页</view>

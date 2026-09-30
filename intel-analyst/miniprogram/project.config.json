@@ -1,0 +1,8 @@
+{
+  "description": "情报分析小程序（本地联调用 touristappid；上线前换成自己的 AppID）",
+  "miniprogramRoot": "./",
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "projectname": "intel-analyst",
+  "setting": { "urlCheck": false, "es6": true, "minified": true }
+}

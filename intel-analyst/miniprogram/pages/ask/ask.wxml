@@ -1,0 +1,18 @@
+<picker range="{{names}}" value="{{idx}}" bindchange="pick">
+  <view class="card">领域：{{names[idx] || '加载中…'}} ▾</view>
+</picker>
+
+<view wx:for="{{msgs}}" wx:key="index" class="card {{item.role}}">
+  <text wx:if="{{item.role === 'me'}}">{{item.text}}</text>
+  <block wx:else>
+    <view wx:for="{{item.blocks}}" wx:for-item="b" wx:key="index" class="{{b.t}}">{{b.text}}</view>
+  </block>
+</view>
+<view class="tip" wx:if="{{busy}}">分析中…</view>
+<view class="tip">回答基于已收录的公开情报，AI 生成，仅供参考</view>
+
+<view class="bar">
+  <input class="ipt" value="{{q}}" bindinput="input" bindconfirm="send" maxlength="300" placeholder="例如：CCER 重启有什么进展？" confirm-type="send" />
+  <button class="btn" size="mini" bindtap="send" disabled="{{busy}}">发送</button>
+</view>
+<view style="height:140rpx"></view>
